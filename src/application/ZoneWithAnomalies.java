@@ -51,13 +51,6 @@ public class ZoneWithAnomalies {
         return result;
     }
 
-    //TODO: delete
-    private void checkmin(float value, Float min){
-        if(value < min){
-            min = value;
-        }
-    }
-
     @Override
     public String toString() {
         return "ZoneWithAnomalies{" +
