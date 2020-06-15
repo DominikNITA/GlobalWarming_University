@@ -1,0 +1,6 @@
+.zone .slider .axis { -fx-tick-label-fill: white; }
+
+.zone {
+    -fx-background-color : rgba(20,20,20,0.7);
+    -fx-background-radius : 10;
+}

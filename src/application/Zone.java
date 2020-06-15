@@ -22,7 +22,7 @@ public class Zone {
 
     @Override
     public int hashCode() {
-        return Objects.hash(latitude, longitude);
+        return 1000*latitude + longitude;
     }
 
     @Override

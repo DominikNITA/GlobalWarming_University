@@ -1,9 +1,6 @@
 package application;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Application {
     private ArrayList<ZoneWithAnomalies> zonesWithAnomalies;
@@ -13,6 +10,10 @@ public class Application {
         String path = this.getClass().getResource("../resources/tempanomaly_4x4grid.csv").getPath();
         zonesWithAnomalies = CsvReader.readFile(path);
         availableYears = CsvReader.availableYears;
+    }
+
+    public ArrayList<Integer> getAvailableYears() {
+        return availableYears;
     }
 
     //Time: 50ms
@@ -53,7 +54,7 @@ public class Application {
 
     //Time: 50ms
     public Map<Zone,Float> getAnomaliesByYear(int year){
-        Map<Zone,Float> anomalies = new HashMap<>();
+        Map<Zone,Float> anomalies = new LinkedHashMap<>();
         for (ZoneWithAnomalies zoneWithAnomalies : zonesWithAnomalies){
             anomalies.put(zoneWithAnomalies.getZone(),zoneWithAnomalies.getValueByYear(year));
         }
@@ -61,11 +62,11 @@ public class Application {
     }
 
     //Time : 1-2ms
-    public Map<Integer,Float> getYearlyAnomaliesForZone(Zone zone){
-        Map<Integer,Float> anomalies = new HashMap<>();
+    public List<Float> getYearlyAnomaliesForZone(Zone zone){
+        List<Float> anomalies = new ArrayList<>();
         for (ZoneWithAnomalies zoneWithAnomalies : zonesWithAnomalies){
             if(zoneWithAnomalies.getZone().equals(zone)){
-                return zoneWithAnomalies.getTemperaturesByYear();
+                anomalies = new ArrayList<>(zoneWithAnomalies.getTemperaturesByYear().values());
             }
         }
         return anomalies;
@@ -77,7 +78,7 @@ public class Application {
         Zone testZone = new Zone(88,162);
 
         long startTime = System.nanoTime();
-        Map<Integer,Float> testMap = app.getYearlyAnomaliesForZone(testZone);
+        Map<Zone,Float> testMap = app.getAnomaliesByYear(1952);
         long endTime = System.nanoTime();
 
         System.out.println(testMap);

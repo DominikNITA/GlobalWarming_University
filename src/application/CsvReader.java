@@ -18,6 +18,7 @@ public class CsvReader {
             BufferedReader bufRead = new BufferedReader(file);
 
             String line = bufRead.readLine();
+            availableYears = new ArrayList<>();
             updateAvailableYears(line);
             line = bufRead.readLine();
             while (line != null) {

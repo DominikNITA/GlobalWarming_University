@@ -1,6 +1,7 @@
 package application;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class ZoneWithAnomalies {
     private Map<Integer, Float> temperaturesByYear;
@@ -63,5 +64,18 @@ public class ZoneWithAnomalies {
                 "temperaturesByYear=" + temperaturesByYear +
                 ", zone=" + zone +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ZoneWithAnomalies that = (ZoneWithAnomalies) o;
+        return zone.equals(that.zone);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(zone);
     }
 }
