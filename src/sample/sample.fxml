@@ -42,13 +42,16 @@
             <Pane fx:id="yearStatisticsPane" layoutX="14.0" layoutY="14.0" prefHeight="151.0" prefWidth="258.0" styleClass="zone" stylesheets="@../resources/styles/styles.css" />
             <Pane fx:id="zoneStatisticsPane" layoutX="505.0" layoutY="14.0" prefHeight="158.0" prefWidth="331.0" styleClass="zone" stylesheets="@../resources/styles/styles.css" />
          </children></Pane>
-      <HBox alignment="CENTER" prefHeight="76.0" prefWidth="850.0">
+      <HBox alignment="CENTER" prefHeight="76.0" prefWidth="850.0" fx:id="yearSelectorZone">
          <children>
             <Slider fx:id="yearSlider" blockIncrement="1.0" majorTickUnit="20.0" max="2020.0" min="1880.0" minorTickCount="1" prefHeight="47.0" prefWidth="680.0" showTickLabels="true" showTickMarks="true" value="1880.0" />
             <Spinner fx:id="yearSpinner" prefHeight="25.0" prefWidth="100.0">
                <HBox.margin>
                   <Insets left="30.0" />
                </HBox.margin>
+               <valueFactory>
+                  <SpinnerValueFactory.IntegerSpinnerValueFactory min="1880" max="2020"/>
+               </valueFactory>
             </Spinner>
          </children></HBox>
    </children>

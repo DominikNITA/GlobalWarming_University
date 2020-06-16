@@ -1,18 +1,21 @@
 package sample;
 
+import application.Application;
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Slider;
-import javafx.scene.control.Spinner;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.MeshView;
+import org.w3c.dom.ls.LSOutput;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -37,7 +40,7 @@ public class Controller implements Initializable {
     private Slider yearSlider;
 
     @FXML
-    private Spinner yearSpinner;
+    private Spinner<Number> yearSpinner;
 
     @FXML
     private Button playPauseButton;
@@ -48,6 +51,8 @@ public class Controller implements Initializable {
     @FXML
     private ChoiceBox modeDropdown;
 
+    private Model model;
+    private Application application;
 
     private final int scaleCount = 8;
 
@@ -86,6 +91,40 @@ public class Controller implements Initializable {
         subScene.setCamera(camera);
         subScene.setFill(Color.GREY);
         pane3D.getChildren().addAll(subScene);
+
+        application = new Application();
+        model = new Model(application);
+
+        model.currentYearProperty().bindBidirectional(yearSlider.valueProperty());
+        model.currentYearProperty().bindBidirectional(yearSpinner.getValueFactory().valueProperty());
+//        Spinner<Integer> spinner = new Spinner<Integer>(application.getAvailableYears().get(0),
+//                application.getAvailableYears().get(application.getAvailableYears().size()-1),
+//                application.getAvailableYears().get(0)
+//                ,1);
+//        spinner.prefHeight(26f);
+//        spinner.prefWidth(100f);
+//        yearSelectorZone.getChildren().add(spinner);
+//        spinnerValue = model.currentYearProperty().asObject();
+
+
+        //spinner.getValueFactory().valueProperty().bindBidirectional(model.currentYearProperty().asObject());
+
+//        System.out.println("WORKING");
+//        model.currentYear.addListener(new ChangeListener<Number>() {
+//            @Override
+//            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+//                //spinner.getValueFactory().valueProperty().setValue((Integer)newValue);
+//                System.out.println("SPINNER?!?! from: " + oldValue + " to " + newValue);
+//            }
+//        });
+//
+//        spinnerValue.addListener(new ChangeListener<Integer>() {
+//            @Override
+//            public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+//                yearSlider.valueProperty().setValue(newValue);
+//                System.out.println("Changing slider");
+//            }
+//        });
     }
 
     private void setupScale() {
