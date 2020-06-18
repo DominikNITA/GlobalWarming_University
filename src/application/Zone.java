@@ -32,4 +32,12 @@ public class Zone {
                 "," + longitude +
                 '}';
     }
+
+    public int getLatitude() {
+        return latitude;
+    }
+
+    public int getLongitude() {
+        return longitude;
+    }
 }

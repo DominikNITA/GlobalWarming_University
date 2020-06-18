@@ -15,7 +15,7 @@ public class Main extends Application {
         root.getStylesheets().add(this.getClass().getResource("../resources/styles/styles.css").toExternalForm());
         primaryStage.setTitle("Global Warming by Dominik Nita");
         primaryStage.setResizable(false);
-        primaryStage.setScene(new Scene(root, 850, 874));
+        primaryStage.setScene(new Scene(root, 850, 874, false));
         primaryStage.show();
     }
 
