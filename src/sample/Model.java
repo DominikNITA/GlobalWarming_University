@@ -16,10 +16,11 @@ import java.util.Map;
 
 public class Model {
     //ObservableMap<Zone,Float> zonesWithAnomaly;
-    MapProperty<Zone,Float> zonesWithAnomaly;
-    protected IntegerProperty currentYear;
-    Application application;
+    private MapProperty<Zone,Float> zonesWithAnomaly;
+    private IntegerProperty currentYear;
+    private Application application;
     private float min,max;
+    private ObjectProperty<Zone> selectedZone;
 
     public Model(Application application){
         zonesWithAnomaly = new SimpleMapProperty<>();
@@ -29,13 +30,11 @@ public class Model {
         currentYear.addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                System.out.println("Changed from: " + oldValue + " to " + newValue);
-                long startTime = System.nanoTime();
                 zonesWithAnomaly.setValue(FXCollections.observableMap(application.getAnomaliesByYear(newValue.intValue())));
-                long stopTime = System.nanoTime();
-                System.out.println("Time spent on retrieving data: " + (stopTime - startTime)/1000000 + "ms");
             }
         });
+
+        selectedZone = new SimpleObjectProperty<>();
 
         min = application.getMinAnomaly();
         max = application.getMaxAnomaly();
@@ -71,5 +70,13 @@ public class Model {
 
     public void IncrementCurrentYear() {
         currentYear.setValue(currentYear.getValue() + 1);
+    }
+
+    public Zone getSelectedZone() {
+        return selectedZone.get();
+    }
+
+    public ObjectProperty<Zone> selectedZoneProperty() {
+        return selectedZone;
     }
 }

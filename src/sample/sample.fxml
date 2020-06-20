@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="874.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <children>
       <Pane fx:id="pane3D" prefHeight="800.0" prefWidth="850.0" style="-fx-background-color: rgb(200,200,200);">
          <children>
-            <VBox fx:id="scaleLegendBox" alignment="CENTER" layoutX="761.0" layoutY="293.0" prefHeight="369.0" prefWidth="75.0" styleClass="zone" stylesheets="@../resources/styles/styles.css" />
-            <HBox alignment="CENTER" fillHeight="false" layoutX="3.0" layoutY="705.0" prefHeight="95.0" prefWidth="844.0">
+            <VBox fx:id="scaleLegendBox" alignment="CENTER" layoutX="755.0" layoutY="238.0" prefHeight="424.0" prefWidth="81.0" styleClass="zone" stylesheets="@../resources/styles/styles.css" />
+            <HBox alignment="CENTER" fillHeight="false" layoutX="-3.0" layoutY="705.0" prefHeight="95.0" prefWidth="856.0">
                <children>
-                  <VBox alignment="CENTER" prefHeight="75.0" prefWidth="168.0" styleClass="zone" stylesheets="@../resources/styles/styles.css">
+                  <VBox alignment="CENTER" prefHeight="75.0" prefWidth="168.0" spacing="5.0" styleClass="zone" stylesheets="@../resources/styles/styles.css">
                      <children>
-                        <Slider fx:id="timeSlider" blockIncrement="1.0" majorTickUnit="5.0" max="5.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" value="1.0" />
+                        <Text fill="#a9d2ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Animation Speed">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Text>
+                        <Slider fx:id="timeSlider" blockIncrement="1.0" majorTickUnit="3.0" max="7.0" min="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" value="1.0" />
                      </children>
                      <HBox.margin>
                         <Insets bottom="10.0" top="10.0" />
@@ -23,7 +28,7 @@
                         <Insets left="10.0" right="10.0" />
                      </padding>
                   </VBox>
-                  <HBox alignment="CENTER" fillHeight="false" prefHeight="81.0" prefWidth="456.0" spacing="5.0">
+                  <HBox alignment="CENTER" fillHeight="false" prefHeight="81.0" prefWidth="468.0" spacing="5.0">
                      <children>
                         <HBox alignment="CENTER" prefHeight="60.0" prefWidth="155.0" spacing="15.0" styleClass="zone" stylesheets="@../resources/styles/styles.css">
                            <children>
@@ -43,14 +48,23 @@
             <Pane fx:id="yearStatisticsPane" layoutX="14.0" layoutY="14.0" prefHeight="151.0" prefWidth="258.0" styleClass="zone" stylesheets="@../resources/styles/styles.css" />
             <Pane fx:id="zoneStatisticsPane" layoutX="433.0" layoutY="14.0" prefHeight="158.0" prefWidth="403.0" styleClass="zone" stylesheets="@../resources/styles/styles.css">
                <children>
-                  <LineChart alternativeRowFillVisible="false" animated="false" layoutX="71.0" legendVisible="false" prefHeight="102.0" prefWidth="318.0">
-                    <xAxis>
-                      <CategoryAxis side="BOTTOM" />
-                    </xAxis>
-                    <yAxis>
-                      <NumberAxis side="LEFT" />
-                    </yAxis>
-                  </LineChart>
+<!--                  <LineChart alternativeRowFillVisible="false" animated="false" axisSortingPolicy="NONE" layoutX="71.0" legendSide="TOP" legendVisible="false" prefHeight="158.0" prefWidth="318.0">-->
+<!--                    <xAxis>-->
+<!--                      <CategoryAxis side="BOTTOM" />-->
+<!--                    </xAxis>-->
+<!--                    <yAxis>-->
+<!--                      <NumberAxis side="LEFT" />-->
+<!--                    </yAxis>-->
+<!--                  </LineChart>-->
+                  <Text fill="WHITE" layoutX="22.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Zone">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="selectedZoneText" fill="#a9d2ff" layoutX="10.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" text=" 40 - 80" textAlignment="CENTER" wrappingWidth="80.99999804794788">
+                     <font>
+                        <Font name="System Bold Italic" size="18.0" />
+                     </font></Text>
                </children></Pane>
          </children></Pane>
       <HBox fx:id="yearSelectorZone" alignment="CENTER" prefHeight="76.0" prefWidth="850.0">

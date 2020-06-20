@@ -4,3 +4,7 @@
     -fx-background-color : rgba(20,20,20,0.4);
     -fx-background-radius : 10;
 }
+
+.chart .axis{
+    -fx-tick-label-fill: white;
+}

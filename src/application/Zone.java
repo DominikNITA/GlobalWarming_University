@@ -11,6 +11,11 @@ public class Zone {
         this.longitude = longitude;
     }
 
+    public Zone (){
+        latitude = 0;
+        longitude = 0;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
