@@ -1,4 +1,10 @@
-.zone .slider .axis { -fx-tick-label-fill: white; }
+* {
+    -fx-white-text : white;
+    -fx-blue-text : #a9d2ff;
+    -fx-red-text : #e06161;
+}
+
+.zone .slider .axis { -fx-tick-label-fill: -fx-blue-text; }
 
 .zone {
     -fx-background-color : rgba(20,20,20,0.4);
@@ -7,4 +13,17 @@
 
 .chart .axis{
     -fx-tick-label-fill: white;
+}
+
+.white-text{
+    -fx-text-fill: -fx-white-text;
+    -fx-fill: -fx-white-text;
+}
+.blue-text{
+    -fx-text-fill: -fx-blue-text;
+    -fx-fill: -fx-blue-text;
+}
+.red-text{
+    -fx-text-fill: -fx-red-text;
+    -fx-fill: -fx-red-text;
 }

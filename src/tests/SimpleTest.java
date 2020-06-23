@@ -2,9 +2,8 @@ package tests;
 
 import static org.junit.Assert.*;
 
-import application.Application;
-import application.CsvReader;
-import application.Zone;
+import backend.BackendLogic;
+import backend.Zone;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,12 +14,12 @@ import org.junit.Test;
 
 public class SimpleTest {
 
-	Application application;
+	BackendLogic application;
 	
 
 	@Before
 	public void setUp(){
-		application = new Application();
+		application = new BackendLogic();
 	}
 	
 	

@@ -1,4 +1,4 @@
-package sample;
+package frontend;
 
 public enum ViewMode {
     Quadrilateral,

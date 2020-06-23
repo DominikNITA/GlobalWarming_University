@@ -1,12 +1,12 @@
-package application;
+package backend;
 
 import java.util.*;
 
-public class Application {
-    private ArrayList<ZoneWithAnomalies> zonesWithAnomalies;
-    private ArrayList<Integer> availableYears;
+public class BackendLogic {
+    private final ArrayList<ZoneWithAnomalies> zonesWithAnomalies;
+    private final ArrayList<Integer> availableYears;
 
-    public Application() {
+    public BackendLogic() {
         String path = this.getClass().getResource("../resources/tempanomaly_4x4grid.csv").getPath();
         zonesWithAnomalies = CsvReader.readFile(path);
         availableYears = CsvReader.availableYears;
@@ -72,22 +72,18 @@ public class Application {
         return anomalies;
     }
 
-
-    public static void main(String[] args) {
-        Application app = new Application();
-        Zone testZone = new Zone(88,162);
-
-        long startTime = System.nanoTime();
-        Map<Zone,Float> testMap = app.getAnomaliesByYear(1952);
-        long endTime = System.nanoTime();
-
-        System.out.println(testMap);
-        // get difference of two nanoTime values
-        long timeElapsed = endTime - startTime;
-
-        System.out.println("Execution time in nanoseconds  : " + timeElapsed);
-
-        System.out.println("Execution time in milliseconds : " +
-                timeElapsed / 1000000);
+    public YearlyStatistics getYearlyStatistics(int year){
+        Map<Zone, Float> anomalies = getAnomaliesByYear(year);
+        float min = Float.MAX_VALUE,max = Float.MIN_VALUE,sum = 0;
+        for (Map.Entry<Zone, Float> entry : anomalies.entrySet()) {
+            sum = entry.getValue().isNaN() ? sum : sum + entry.getValue();
+            if(min > entry.getValue()){
+                min = entry.getValue();
+            }
+            if(max < entry.getValue()){
+                max = entry.getValue();
+            }
+        }
+        return new YearlyStatistics(min,max,sum/anomalies.size());
     }
 }

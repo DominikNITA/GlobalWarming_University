@@ -1,28 +1,22 @@
-package sample;
+package frontend;
 
-import application.Application;
-import application.Zone;
-import javafx.beans.Observable;
+import backend.BackendLogic;
+import backend.Zone;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableIntegerValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableIntegerArray;
-import javafx.collections.ObservableListBase;
 import javafx.collections.ObservableMap;
-
-import java.util.Map;
 
 public class Model {
     //ObservableMap<Zone,Float> zonesWithAnomaly;
     private MapProperty<Zone,Float> zonesWithAnomaly;
     private IntegerProperty currentYear;
-    private Application application;
+    private BackendLogic application;
     private float min,max;
     private ObjectProperty<Zone> selectedZone;
 
-    public Model(Application application){
+    public Model(BackendLogic application){
         zonesWithAnomaly = new SimpleMapProperty<>();
         currentYear = new SimpleIntegerProperty(0);
         this.application = application;
@@ -56,7 +50,7 @@ public class Model {
         return currentYear;
     }
 
-    public Application getApplication() {
+    public BackendLogic getApplication() {
         return application;
     }
 

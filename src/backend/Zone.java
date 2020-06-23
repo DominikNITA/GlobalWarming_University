@@ -1,6 +1,4 @@
-package application;
-
-import java.util.Objects;
+package backend;
 
 public class Zone {
     private int latitude;

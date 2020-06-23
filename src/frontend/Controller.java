@@ -1,9 +1,12 @@
-package sample;
+package frontend;
 
-import application.Application;
-import application.Zone;
+import backend.BackendLogic;
+import backend.YearlyStatistics;
+import backend.Zone;
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
+import frontend.utility.CameraManager;
+import frontend.utility.ColorPaletteTools;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.SimpleFloatProperty;
@@ -74,22 +77,27 @@ public class Controller implements Initializable {
     private Text selectedZoneText;
     private LineChart<Number, Number> lineChart;
 
+    @FXML
+    private Text yearStatsText;
+    @FXML
+    private Text minTempText;
+    @FXML
+    private Text maxTempText;
+    @FXML
+    private Text meanTempText;
+
     private Model model;
-    private Application application;
+    private BackendLogic application;
 
-    ViewMode viewMode;
     Group dataVisualization;
-    Group quadrilateralGroup;
-    Group histogramGroup;
-    HashMap<Zone, MeshView> quadrilateralMap;
-    HashMap<Zone, Cylinder> histogramMap;
 
-    private final int scaleCount = 7;
-    private float stepLength;
-    private PhongMaterial[] materials = new PhongMaterial[2 * scaleCount];
-    private PhongMaterial NaNMaterial;
-    private PhongMaterial PositiveTempMaterial;
-    private PhongMaterial NegativeTempMaterial;
+    Group quadrilateralGroup;
+    HashMap<Zone, MeshView> quadrilateralMap;
+    ColorPaletteTools quadrilateralPalette;
+
+    Group histogramGroup;
+    HashMap<Zone, Cylinder> histogramMap;
+    ColorPaletteTools histogramPalette;
 
     AnimationTimer animationTimer;
     boolean isPlaying = false;
@@ -100,16 +108,15 @@ public class Controller implements Initializable {
     private static final float TEXTURE_LAT_OFFSET = -0.2f;
     private static final float TEXTURE_LON_OFFSET = 2.8f;
 
-
     Zone selectedZone = null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setup3DScene();
-        application = new Application();
+        application = new BackendLogic();
         model = new Model(application);
         setupChart();
-        setupScale();
+        setupColorPalettes();
         setupQuadrilateralMode();
         setupHistogramMode();
         dataVisualization.getChildren().add(quadrilateralGroup);
@@ -129,9 +136,10 @@ public class Controller implements Initializable {
         yAxis.setLowerBound(application.getMinAnomaly());
         yAxis.setUpperBound(application.getMaxAnomaly());
         lineChart = new LineChart<>(xAxis, yAxis);
-        lineChart.setLayoutX(71);
+        lineChart.setLayoutX(110);
         lineChart.setPrefHeight(158);
         lineChart.setPrefWidth(318);
+        //don't show points on the chart
         lineChart.setCreateSymbols(false);
         zoneStatisticsPane.getChildren().add(lineChart);
     }
@@ -152,17 +160,11 @@ public class Controller implements Initializable {
 
         Group earthWithTowns = new Group(earth);
         earthWithTowns.getChildren().add(dataVisualization);
+        //root3D.getChildren().add(earth);
         root3D.getChildren().add(earthWithTowns);
 
         PerspectiveCamera camera = new PerspectiveCamera(true);
         new CameraManager(camera, pane3D, root3D);
-
-//        PointLight light = new PointLight(Color.WHITE);
-//        light.setTranslateX(-180);
-//        light.setTranslateY(-90);
-//        light.setTranslateZ(-120);
-//        light.getScope().addAll(root3D);
-//        root3D.getChildren().add(light);
 
         AmbientLight ambientLight = new AmbientLight(Color.WHITE);
         ambientLight.getScope().addAll(root3D);
@@ -175,31 +177,13 @@ public class Controller implements Initializable {
         pane3D.getChildren().addAll(subScene);
     }
 
-    private void setupScale() {
-        float opacity = 0.01f;
-        NaNMaterial = new PhongMaterial(new Color(0.2, 0.2, 0.2, opacity + 0.4));
-        PositiveTempMaterial = new PhongMaterial(new Color(0.8, 0, 0, 0.8));
-        NegativeTempMaterial = new PhongMaterial(new Color(0, 0, 0.8, 0.8));
-        Color positiveMaxColor = new Color(0.8, 0, 0, opacity);
-        Color positiveMinColor = new Color(0.5, 0.5, 0, opacity);
-        Color negativeMaxColor = new Color(0.1, 0.1, 0.85, opacity);
-        Color negativeMinColor = new Color(0.6, 0.6, 0.6, opacity);
-        for (int i = 0; i < scaleCount; i++) {
-            materials[i] = new PhongMaterial(new Color(
-                    negativeMinColor.getRed() + (i / (float) scaleCount) * (negativeMaxColor.getRed() - negativeMinColor.getRed()),
-                    negativeMinColor.getGreen() + (i / (float) scaleCount) * (negativeMaxColor.getGreen() - negativeMinColor.getGreen()),
-                    negativeMinColor.getBlue() + (i / (float) scaleCount) * (negativeMaxColor.getBlue() - negativeMinColor.getBlue()),
-                    opacity
-            ));
-        }
-        for (int i = 0; i < scaleCount; i++) {
-            materials[i + scaleCount] = new PhongMaterial(new Color(
-                    positiveMinColor.getRed() + (i / (float) scaleCount) * (positiveMaxColor.getRed() - positiveMinColor.getRed()),
-                    positiveMinColor.getGreen() + (i / (float) scaleCount) * (positiveMaxColor.getGreen() - positiveMinColor.getGreen()),
-                    positiveMinColor.getBlue() + (i / (float) scaleCount) * (positiveMaxColor.getBlue() - positiveMinColor.getBlue()),
-                    opacity
-            ));
-        }
+    public void setupColorPalettes() {
+        quadrilateralPalette = new ColorPaletteTools(6, 0.01f, new PhongMaterial(new Color(0.2, 0.2, 0.2, 0.4)));
+        histogramPalette = new ColorPaletteTools(2, 0.6f, new PhongMaterial(new Color(0, 0, 0, 0f)));
+    }
+
+    public void insertColorPaletteToPane() {
+        quadrilateralPalette.prepareScaleLegend(scaleLegendBox);
     }
 
     private void setupListeners() {
@@ -220,11 +204,52 @@ public class Controller implements Initializable {
             }
         });
 
+        modeDropdown.setItems(FXCollections.observableArrayList(ViewMode.values()));
+        modeDropdown.valueProperty().setValue(ViewMode.Quadrilateral);
+        modeDropdown.valueProperty().addListener(new ChangeListener<ViewMode>() {
+            @Override
+            public void changed(ObservableValue<? extends ViewMode> observable, ViewMode oldValue, ViewMode newValue) {
+                dataVisualization.getChildren().clear();
+                switch (newValue) {
+                    case Quadrilateral:
+                        updateQuadrilateralGroup(model.getZonesWithAnomaly());
+                        dataVisualization.getChildren().add(quadrilateralGroup);
+                        break;
+                    case Histogram:
+                        updateHistogramGroup(model.getZonesWithAnomaly());
+                        dataVisualization.getChildren().add(histogramGroup);
+                        break;
+                    default:
+                        System.out.println("Invalid view mode value!");
+                        break;
+                }
+            }
+        });
+
         model.selectedZoneProperty().addListener(new ChangeListener<Zone>() {
             @Override
             public void changed(ObservableValue<? extends Zone> observable, Zone oldValue, Zone newValue) {
                 selectedZoneText.setText(newValue.getLatitude() + "°   " + newValue.getLongitude() + "°");
                 updateChart(application.getYearlyAnomaliesForZone(newValue));
+            }
+        });
+
+        model.currentYearProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                YearlyStatistics stats = application.getYearlyStatistics((int) newValue);
+                yearStatsText.setText(newValue.toString());
+                minTempText.setText((Math.round(stats.getMinTemperature() * 100f) / 100f) + "");
+                maxTempText.setText((Math.round(stats.getMaxTemperature() * 100f) / 100f) + "");
+                meanTempText.setText((Math.round(stats.getMeanTemperature() * 100f) / 100f) + "");
+
+                meanTempText.getStyleClass().clear();
+                if(stats.getMeanTemperature() >= 0){
+                    meanTempText.getStyleClass().add("red-text");
+                }
+                else{
+                    meanTempText.getStyleClass().add("blue-text");
+                }
             }
         });
 
@@ -253,29 +278,6 @@ public class Controller implements Initializable {
                 }
             }
         });
-
-        //TODO move to initial setup
-        modeDropdown.setItems(FXCollections.observableArrayList(ViewMode.values()));
-        modeDropdown.valueProperty().setValue(ViewMode.Quadrilateral);
-        modeDropdown.valueProperty().addListener(new ChangeListener<ViewMode>() {
-            @Override
-            public void changed(ObservableValue<? extends ViewMode> observable, ViewMode oldValue, ViewMode newValue) {
-                dataVisualization.getChildren().clear();
-                switch (newValue) {
-                    case Quadrilateral:
-                        updateQuadrilateralGroup(model.getZonesWithAnomaly());
-                        dataVisualization.getChildren().add(quadrilateralGroup);
-                        break;
-                    case Histogram:
-                        updateHistogramGroup(model.getZonesWithAnomaly());
-                        dataVisualization.getChildren().add(histogramGroup);
-                        break;
-                    default:
-                        System.out.println("Invalid view mode value!");
-                        break;
-                }
-            }
-        });
     }
 
     private void updateChart(List<Float> yValues) {
@@ -292,7 +294,7 @@ public class Controller implements Initializable {
 
     private void updateQuadrilateralGroup(ObservableMap<Zone, Float> newValue) {
         for (Map.Entry<Zone, Float> entry : newValue.entrySet()) {
-            quadrilateralMap.get(entry.getKey()).setMaterial(getMaterial(entry.getValue()));
+            quadrilateralMap.get(entry.getKey()).setMaterial(quadrilateralPalette.getMaterial(entry.getValue()));
         }
     }
 
@@ -310,19 +312,14 @@ public class Controller implements Initializable {
             Point3D topRight = geoCoordTo3dCoord(latitude - degreeSize / 2, longitude + degreeSize / 2).multiply(scale);
             Point3D bottomLeft = geoCoordTo3dCoord(latitude + degreeSize / 2, longitude - degreeSize / 2).multiply(scale);
             Point3D bottomRight = geoCoordTo3dCoord(latitude + degreeSize / 2, longitude + degreeSize / 2).multiply(scale);
-            PhongMaterial material = getMaterial(entry.getValue());
+            PhongMaterial material = quadrilateralPalette.getMaterial(entry.getValue());
             AddQuadrilateral(quadrilateralGroup, topRight, bottomRight, bottomLeft, topLeft, material, entry.getKey());
         }
     }
 
     private void updateHistogramGroup(ObservableMap<Zone, Float> newValue) {
         for (Map.Entry<Zone, Float> entry : newValue.entrySet()) {
-/*            if (entry.getValue() > 0) {
-                histogramMap.get(entry.getKey()).setMaterial(PositiveTempMaterial);
-            } else {
-                histogramMap.get(entry.getKey()).setMaterial(NegativeTempMaterial);
-            }*/
-            histogramMap.get(entry.getKey()).setMaterial(getMaterial(entry.getValue()));
+            histogramMap.get(entry.getKey()).setMaterial(histogramPalette.getMaterial(entry.getValue()));
             histogramMap.get(entry.getKey()).setHeight(getHeightForAnomaly((float) Math.round(entry.getValue() * 100f) / 100f));
         }
     }
@@ -361,24 +358,6 @@ public class Controller implements Initializable {
             histogramGroup.getChildren().add(line);
             histogramMap.put(entry.getKey(), line);
         }
-    }
-
-    private PhongMaterial getMaterial(float value) {
-        //check for NaN -> https://stackoverflow.com/questions/9341653/float-nan-float-nan
-        if (value != value) {
-            return NaNMaterial;
-        }
-        int materialIndex;
-        if (value > scaleCount) {
-            materialIndex = materials.length - 1;
-        } else if (value < -scaleCount) {
-            materialIndex = 0;
-        } else if ((int) value == 0) {
-            materialIndex = value > 0 ? scaleCount : scaleCount - 1;
-        } else {
-            materialIndex = (int) value + scaleCount - 1;
-        }
-        return materials[materialIndex];
     }
 
     private static Point3D geoCoordTo3dCoord(float lat, float lon) {
@@ -448,7 +427,7 @@ public class Controller implements Initializable {
                 if (lastTime == null) {
                     lastTime = now;
                 }
-                if (timeElapsed >= 0.9f) {
+                if (timeElapsed >= 75f) {
                     timeElapsed = 0f;
                     lastTime = null;
                     if (model.getCurrentYear() >= application.getAvailableYears().get(application.getAvailableYears().size() - 1)) {

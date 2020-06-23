@@ -1,4 +1,4 @@
-package sample;
+package frontend.utility;
 
 import javafx.event.EventHandler;
 import javafx.scene.*;

@@ -1,4 +1,4 @@
-package application;
+package backend;
 
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +23,7 @@ public class ZoneWithAnomalies {
     public float getMin(){
         float min = Float.MAX_VALUE;
         for (Map.Entry<Integer,Float> entry:temperaturesByYear.entrySet()
-             ) {
+        ) {
             if(entry.getValue() < min){
                 min = entry.getValue();
             }
